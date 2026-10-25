@@ -36,7 +36,7 @@ const Contact = () => {
     setStatus('sending');
     setFeedbackMsg('');
 
-    const targetEmail = personalInfo.formSubmissionEmail || 'kameswar692007@gmail.com';
+    const targetEmail = personalInfo.formSubmissionEmail || 'kameshwar692007@gmail.com';
 
     try {
       const response = await fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
@@ -66,9 +66,9 @@ const Contact = () => {
         setTimeout(() => setStatus('idle'), 6000);
       } else if (data.message && data.message.includes('Activation')) {
         setStatus('success');
-        setFeedbackMsg('Almost ready! An activation email was sent to kameswar692007@gmail.com. Click "Activate Form" once in your inbox to complete connection.');
+        setFeedbackMsg(`Activation email sent to ${targetEmail}! Please check your inbox (or Spam folder) and click "Activate Form" once to start receiving submissions.`);
         formRef.current.reset();
-        setTimeout(() => setStatus('idle'), 8000);
+        setTimeout(() => setStatus('idle'), 10000);
       } else {
         throw new Error(data.message || 'Submission failed');
       }

@@ -19,7 +19,7 @@ export const personalInfo = {
     secondary: "janakisivakumar96@gmail.com",
   },
   // Active email receiver for enquiry form submissions (configured for testing)
-  formSubmissionEmail: "kameswar692007@gmail.com",
+  formSubmissionEmail: "kameshwar692007@gmail.com",
   experienceYears: "3",
   summary:
     "Paediatrician and Senior Resident at Sri Manakula Vinayagar Medical College and Hospital, Puducherry. Dedicated to compassionate, evidence-based healthcare for newborns, infants, children, and adolescents, with clinical experience across general paediatrics, emergency paediatric care, PICU, and neonatal care.",
