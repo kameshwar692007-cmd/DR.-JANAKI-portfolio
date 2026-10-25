@@ -6,6 +6,7 @@ const Contact = () => {
   const ref = useRef(null);
   const formRef = useRef(null);
   const [status, setStatus] = useState('idle');
+  const [feedbackMsg, setFeedbackMsg] = useState('');
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -14,33 +15,70 @@ const Contact = () => {
 
   const y = useTransform(scrollYProgress, [0, 1], ["-12%", "20%"]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (status === 'sending') return;
 
-    setStatus('sending');
-
     const form = formRef.current;
-    const name = form.querySelector('#parentName')?.value || '';
-    const phone = form.querySelector('#phone')?.value || '';
-    const email = form.querySelector('#email')?.value || '';
-    const childAge = form.querySelector('#childAge')?.value || '';
-    const message = form.querySelector('#message')?.value || '';
+    const name = form.querySelector('#parentName')?.value.trim() || '';
+    const phone = form.querySelector('#phone')?.value.trim() || '';
+    const email = form.querySelector('#email')?.value.trim() || '';
+    const childAge = form.querySelector('#childAge')?.value.trim() || '';
+    const message = form.querySelector('#message')?.value.trim() || '';
 
-    if (!name.trim() || !email.trim() || !message.trim()) {
+    if (!name || !email || !message) {
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 3000);
+      setFeedbackMsg('Please fill in all required fields (Name, Email, Message).');
+      setTimeout(() => setStatus('idle'), 4000);
       return;
     }
 
-    const mailtoLink = `mailto:${personalInfo.emails.primary}?subject=Clinical Enquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(
-      `Parent/Guardian Name: ${name}\nPhone: ${phone}\nEmail: ${email}\nChild Age / Enquiry: ${childAge}\n\nEnquiry Details:\n${message}`
-    )}`;
+    setStatus('sending');
+    setFeedbackMsg('');
 
-    window.location.href = mailtoLink;
-    setStatus('success');
-    formRef.current.reset();
-    setTimeout(() => setStatus('idle'), 4000);
+    const targetEmail = personalInfo.formSubmissionEmail || 'kameswar692007@gmail.com';
+
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          _subject: `New Clinical Enquiry from ${name} (Child: ${childAge || 'Not specified'})`,
+          _template: 'table',
+          _captcha: 'false',
+          'Parent / Inquirer Name': name,
+          'Contact Phone': phone || 'Not provided',
+          'Reply-To Email': email,
+          'Child Age / Query Nature': childAge || 'General Enquiry',
+          'Clinical Enquiry Details': message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success !== 'false') {
+        setStatus('success');
+        setFeedbackMsg('Thank you! Your clinical enquiry has been sent. You will receive a response shortly.');
+        formRef.current.reset();
+        setTimeout(() => setStatus('idle'), 6000);
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      console.warn('FormSubmit network error, invoking mail client fallback:', err);
+      // Graceful mail client fallback
+      const mailtoLink = `mailto:${targetEmail}?subject=Clinical Enquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(
+        `Parent/Guardian: ${name}\nPhone: ${phone}\nEmail: ${email}\nChild Age: ${childAge}\n\nEnquiry Details:\n${message}`
+      )}`;
+      window.location.href = mailtoLink;
+      setStatus('success');
+      setFeedbackMsg('Enquiry initiated via your email client.');
+      formRef.current.reset();
+      setTimeout(() => setStatus('idle'), 5000);
+    }
   };
 
   return (
@@ -272,21 +310,46 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={status === 'sending'}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-[#061B3A] font-bold text-sm hover:scale-[1.01] transition-transform shadow-[0_8px_20px_rgba(2,132,199,0.3)] disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-[#061B3A] font-bold text-sm hover:scale-[1.01] transition-transform shadow-[0_8px_20px_rgba(2,132,199,0.3)] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
               >
                 {status === 'sending' ? (
-                  <span>Preparing Enquiry...</span>
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-[#061B3A]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Sending Enquiry...</span>
+                  </>
                 ) : status === 'success' ? (
-                  <span>Enquiry Initiated ✓</span>
+                  <>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Enquiry Sent Successfully ✓</span>
+                  </>
                 ) : (
                   <span>Submit Clinical Enquiry</span>
                 )}
               </button>
 
+              {status === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs text-center font-medium"
+                >
+                  {feedbackMsg || 'Thank you! Your clinical enquiry has been sent. You will receive a response shortly.'}
+                </motion.div>
+              )}
+
               {status === 'error' && (
-                <p className="text-red-400 text-xs text-center font-medium">
-                  Please fill in all required fields (Name, Email, Message).
-                </p>
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs text-center font-medium"
+                >
+                  {feedbackMsg || 'Please fill in all required fields (Name, Email, Message).'}
+                </motion.div>
               )}
             </form>
           </motion.div>
