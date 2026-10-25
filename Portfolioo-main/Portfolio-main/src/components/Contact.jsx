@@ -59,24 +59,23 @@ const Contact = () => {
 
       const data = await response.json();
 
-      if (response.ok && data.success !== 'false') {
+      if (data.success === 'true' || response.ok) {
         setStatus('success');
-        setFeedbackMsg('Thank you! Your clinical enquiry has been sent. You will receive a response shortly.');
+        setFeedbackMsg('Thank you! Your clinical enquiry has been sent to Dr. Janaki. You will receive a response shortly.');
         formRef.current.reset();
         setTimeout(() => setStatus('idle'), 6000);
+      } else if (data.message && data.message.includes('Activation')) {
+        setStatus('success');
+        setFeedbackMsg('Almost ready! An activation email was sent to kameswar692007@gmail.com. Click "Activate Form" once in your inbox to complete connection.');
+        formRef.current.reset();
+        setTimeout(() => setStatus('idle'), 8000);
       } else {
         throw new Error(data.message || 'Submission failed');
       }
     } catch (err) {
-      console.warn('FormSubmit network error, invoking mail client fallback:', err);
-      // Graceful mail client fallback
-      const mailtoLink = `mailto:${targetEmail}?subject=Clinical Enquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(
-        `Parent/Guardian: ${name}\nPhone: ${phone}\nEmail: ${email}\nChild Age: ${childAge}\n\nEnquiry Details:\n${message}`
-      )}`;
-      window.location.href = mailtoLink;
-      setStatus('success');
-      setFeedbackMsg('Enquiry initiated via your email client.');
-      formRef.current.reset();
+      console.warn('Form submission notice:', err);
+      setStatus('error');
+      setFeedbackMsg('Unable to send enquiry right now. Please check your network connection and try again.');
       setTimeout(() => setStatus('idle'), 5000);
     }
   };
@@ -247,6 +246,7 @@ const Contact = () => {
                   </label>
                   <input
                     id="parentName"
+                    name="name"
                     type="text"
                     required
                     placeholder="e.g. Anand Kumar"
@@ -260,6 +260,7 @@ const Contact = () => {
                   </label>
                   <input
                     id="phone"
+                    name="phone"
                     type="tel"
                     placeholder="+91 98765 43210"
                     className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/35 text-xs sm:text-sm focus:outline-none focus:border-[#38BDF8]"
@@ -274,6 +275,7 @@ const Contact = () => {
                   </label>
                   <input
                     id="email"
+                    name="email"
                     type="email"
                     required
                     placeholder="yourname@example.com"
@@ -287,6 +289,7 @@ const Contact = () => {
                   </label>
                   <input
                     id="childAge"
+                    name="childAge"
                     type="text"
                     placeholder="e.g. 6 Months / Routine Check"
                     className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/35 text-xs sm:text-sm focus:outline-none focus:border-[#38BDF8]"
@@ -300,6 +303,7 @@ const Contact = () => {
                 </label>
                 <textarea
                   id="message"
+                  name="message"
                   required
                   rows={4}
                   placeholder="Please describe your enquiry or clinical question..."
