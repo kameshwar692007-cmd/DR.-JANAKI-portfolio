@@ -43,10 +43,8 @@ const Navbar = () => {
 
         {/* Doctor Brand Logo - strictly non-wrapping */}
         <a href="#home" className="nav-logo group shrink-0 whitespace-nowrap flex items-center gap-2" aria-label="Dr. Janaki S Home">
-          <span className="nav-logo-icon flex items-center justify-center p-1.5 bg-gradient-to-tr from-[#0284C7] to-[#38BDF8] text-white shadow-[0_2px_10px_rgba(2,132,199,0.35)] shrink-0" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 4v16m-8-8h16" />
-            </svg>
+          <span className="nav-logo-icon flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-tr from-[#0284C7] to-[#38BDF8] text-white shadow-[0_2px_10px_rgba(2,132,199,0.35)] shrink-0 text-base leading-none" aria-hidden="true">
+            🩺
           </span>
           <span className="font-bold tracking-tight text-[#0B2345] whitespace-nowrap">
             {personalInfo.brandName}

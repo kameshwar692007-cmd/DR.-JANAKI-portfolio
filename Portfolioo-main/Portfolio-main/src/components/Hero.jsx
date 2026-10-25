@@ -142,30 +142,21 @@ const Hero = () => {
             {/* Top Bar: Verification & Status */}
             <div className="flex items-center justify-between pb-5 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <span className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-[#38BDF8] flex items-center justify-center text-white shadow-md shadow-sky-500/20">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 4v16m-8-8h16" />
-                  </svg>
+                <span className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-[#38BDF8] flex items-center justify-center text-white shadow-md shadow-sky-500/20 text-xl leading-none" aria-hidden="true">
+                  🩺
                 </span>
                 <div>
                   <h3 className="text-white font-bold text-sm tracking-tight">Clinical Practice</h3>
                   <p className="text-xs text-slate-300 font-medium">SMVMCH · Dept. of Paediatrics</p>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Senior Resident
-              </div>
             </div>
 
             {/* Core Competencies Quick Grid */}
             <div className="grid grid-cols-2 gap-3 my-5">
               <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#38BDF8]/40 transition-colors">
-                <div className="w-7 h-7 rounded-lg bg-[#0284C7]/20 text-[#38BDF8] flex items-center justify-center mb-2">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 4v16m-8-8h16" />
-                  </svg>
+                <div className="w-7 h-7 rounded-lg bg-[#0284C7]/20 text-[#38BDF8] flex items-center justify-center mb-2 text-sm leading-none" aria-hidden="true">
+                  🩺
                 </div>
                 <h4 className="text-white font-semibold text-xs mb-0.5">General Paediatrics</h4>
                 <p className="text-[11px] text-slate-300">Acute &amp; Preventive Care</p>
