@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="medBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="medBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0B2345"/>
+      <stop offset="100%" stop-color="#061B3A"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rounded pill -->
+  <rect width="512" height="512" rx="128" fill="url(#medBg)"/>
+  
+  <!-- Subtle inner ring -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#38BDF8" stroke-width="6" opacity="0.25"/>
+
+  <!-- Medical Cross / Plus with rounded caps -->
+  <path d="M216 110 h80 v106 h106 v80 h-106 v106 h-80 v-106 h-106 v-80 h106 Z" fill="url(#medBlue)" rx="16"/>
+
+  <!-- Central Heartbeat Rhythm Line -->
+  <path d="M120 256 h70 l24 -55 l32 110 l30 -80 l18 25 h98" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
