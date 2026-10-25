@@ -70,10 +70,7 @@ const Contact = () => {
 
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(personalInfo.emails.primary)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    const popup = window.open(gmailUrl, '_blank', 'noopener,noreferrer');
-    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-      window.location.href = `mailto:${personalInfo.emails.primary}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    }
+    window.open(gmailUrl, '_blank');
 
     setTimeout(() => {
       formRef.current?.reset();
