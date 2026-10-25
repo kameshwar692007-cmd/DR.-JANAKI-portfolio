@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import doctorPhoto from '../assets/about/dr-janaki.png';
 import { aboutContent } from '../data/portfolioData';
@@ -57,46 +57,14 @@ const DisciplineIcon = ({ name }) => {
 /* ─── 3D DOCTOR CLINICAL ID BADGE ON PEDESTAL ───────────────────── */
 const DoctorCard3D = () => {
   const cardRef = useRef(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [hovered, setHovered] = useState(false);
-  const rafRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: cardRef,
     offset: ["start end", "end start"]
   });
 
-  // Controlled, safe vertical parallax shift (-10px to +10px)
-  const scrollParallaxY = useTransform(scrollYProgress, [0, 1], [-10, 10]);
-
-  const MAX_TILT = 4;
-
-  const handleMouseMove = useCallback((e) => {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = (e.clientX - cx) / (rect.width / 2);
-    const dy = (e.clientY - cy) / (rect.height / 2);
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      setTilt({ x: -dy * MAX_TILT, y: dx * MAX_TILT });
-    });
-  }, []);
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-    setTilt({ x: 0, y: 0 });
-  };
-
-  useEffect(() => () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-  }, []);
-
-  const cardTransform = hovered
-    ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.015)`
-    : `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1)`;
+  // Pure scroll parallax: smooth continuous shift during scroll only (no hover shift)
+  const scrollParallaxY = useTransform(scrollYProgress, [0, 1], [-24, 24]);
 
   return (
     <div className="about-3d-scene" data-aos="fade-right">
@@ -147,10 +115,7 @@ const DoctorCard3D = () => {
         <div
           ref={cardRef}
           className="about-id-card flex flex-col justify-between p-5 bg-gradient-to-b from-[#0B2345] to-[#061B3A] border border-white/15 shadow-2xl rounded-2xl"
-          style={{ transform: cardTransform, willChange: 'transform', minHeight: '370px', width: '275px' }}
-          onMouseMove={handleMouseMove}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={handleMouseLeave}
+          style={{ minHeight: '370px', width: '275px' }}
         >
           {/* Top Medical Institution Header */}
           <div className="border-b border-white/10 pb-2.5 text-center">
@@ -162,24 +127,23 @@ const DoctorCard3D = () => {
             </p>
           </div>
 
-          {/* Doctor Portrait Photo Frame with Safe Parallax & Zero Edge Exposure */}
+          {/* Doctor Portrait Photo Frame with Pure Scroll Parallax & Zero Edge Exposure */}
           <div className="my-2.5 relative w-full aspect-[4/5] rounded-xl overflow-hidden border border-white/20 shadow-lg bg-[#061B3A]">
             <motion.div
               style={{
                 y: scrollParallaxY,
-                x: -tilt.y * 1.5,
               }}
-              transition={{ type: "spring", stiffness: 180, damping: 20 }}
-              className="absolute inset-[-12%] w-[124%] h-[124%] will-change-transform pointer-events-none"
+              className="absolute inset-[-16%] w-[132%] h-[132%] will-change-transform pointer-events-none"
             >
               <img
                 src={doctorPhoto}
                 alt="Dr. Janaki S, Paediatrician"
-                className="w-full h-full object-cover object-top scale-105"
+                className="w-full h-full object-cover object-top"
+                draggable={false}
               />
             </motion.div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#061B3A]/90 via-[#061B3A]/20 to-transparent pointer-events-none" />
-            <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between z-10">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#061B3A]/90 via-[#061B3A]/15 to-transparent pointer-events-none" />
+            <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
               <span className="text-[10px] font-bold text-white px-2 py-0.5 rounded-md bg-[#0B2345]/90 border border-white/20 backdrop-blur-sm shadow">
                 Dr. Janaki S
               </span>

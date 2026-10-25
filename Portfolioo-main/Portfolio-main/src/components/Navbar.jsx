@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { personalInfo } from '../data/portfolioData';
 
 const Navbar = () => {
@@ -7,18 +8,29 @@ const Navbar = () => {
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-      const sections = ['home', 'about', 'expertise', 'experience', 'education', 'research', 'contact'];
-      const scrollY = window.scrollY + 140;
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
-        if (el && el.offsetTop <= scrollY) {
-          setActiveSection(sections[i]);
-          break;
-        }
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 30);
+
+          const sections = ['home', 'about', 'expertise', 'experience', 'education', 'research', 'contact'];
+          const scrollPos = window.scrollY + 160;
+
+          for (let i = sections.length - 1; i >= 0; i--) {
+            const el = document.getElementById(sections[i]);
+            if (el && el.offsetTop <= scrollPos) {
+              setActiveSection(sections[i]);
+              break;
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -33,8 +45,20 @@ const Navbar = () => {
     { label: 'Contact', id: 'contact' },
   ];
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (e, id) => {
+    e.preventDefault();
     setIsOpen(false);
+    setActiveSection(id);
+    const element = document.getElementById(id);
+    if (element) {
+      const navOffset = 85;
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: Math.max(0, elementPosition - navOffset),
+        behavior: 'smooth'
+      });
+      window.history.pushState(null, '', `#${id}`);
+    }
   };
 
   return (
@@ -42,7 +66,12 @@ const Navbar = () => {
       <div className="nav-inner">
 
         {/* Doctor Brand Logo - strictly non-wrapping */}
-        <a href="#home" className="nav-logo group shrink-0 whitespace-nowrap flex items-center gap-2" aria-label="Dr. Janaki S Home">
+        <a
+          href="#home"
+          onClick={(e) => handleLinkClick(e, 'home')}
+          className="nav-logo group shrink-0 whitespace-nowrap flex items-center gap-2"
+          aria-label="Dr. Janaki S Home"
+        >
           <span className="nav-logo-icon flex items-center justify-center p-1.5 bg-gradient-to-tr from-[#0284C7] to-[#38BDF8] text-white shadow-[0_2px_10px_rgba(2,132,199,0.35)] shrink-0" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 4v16m-8-8h16" />
@@ -54,7 +83,7 @@ const Navbar = () => {
           </span>
         </a>
 
-        {/* Desktop Navigation Links */}
+        {/* Desktop Navigation Links with Smooth Animated Gliding Highlight */}
         <div className="nav-links">
           {navLinks.map((link) => {
             const active = activeSection === link.id;
@@ -62,12 +91,27 @@ const Navbar = () => {
               <a
                 key={link.id}
                 href={`#${link.id}`}
+                onClick={(e) => handleLinkClick(e, link.id)}
                 className={`nav-link${active ? ' nav-link--active' : ''}`}
                 aria-current={active ? 'page' : undefined}
               >
-                {active && <span className="nav-active-bg" aria-hidden="true" />}
+                {active && (
+                  <motion.span
+                    layoutId="activeNavPill"
+                    className="nav-active-bg"
+                    transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                    aria-hidden="true"
+                  />
+                )}
                 <span className="relative z-10">{link.label}</span>
-                {active && <span className="nav-active-bar" aria-hidden="true" />}
+                {active && (
+                  <motion.span
+                    layoutId="activeNavIndicator"
+                    className="nav-active-bar"
+                    transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                    aria-hidden="true"
+                  />
+                )}
               </a>
             );
           })}
@@ -76,6 +120,7 @@ const Navbar = () => {
         {/* Clinical Enquiry CTA */}
         <a
           href="#contact"
+          onClick={(e) => handleLinkClick(e, 'contact')}
           className="nav-hire flex items-center gap-2"
           aria-label="Send clinical enquiry"
         >
@@ -112,7 +157,7 @@ const Navbar = () => {
                 <a
                   key={link.id}
                   href={`#${link.id}`}
-                  onClick={handleLinkClick}
+                  onClick={(e) => handleLinkClick(e, link.id)}
                   className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                     active
                       ? 'bg-[#0284C7]/10 text-[#0284C7] font-bold'
@@ -125,7 +170,7 @@ const Navbar = () => {
             })}
             <a
               href="#contact"
-              onClick={handleLinkClick}
+              onClick={(e) => handleLinkClick(e, 'contact')}
               className="mt-3 text-center px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#0B2345] to-[#1769D1] text-white font-bold text-sm shadow-md"
             >
               Send Clinical Enquiry
