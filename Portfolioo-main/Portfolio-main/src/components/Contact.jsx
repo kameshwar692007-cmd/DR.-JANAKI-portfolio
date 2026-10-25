@@ -15,69 +15,70 @@ const Contact = () => {
 
   const y = useTransform(scrollYProgress, [0, 1], ["-12%", "20%"]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (status === 'sending') return;
-
+  const getFormData = () => {
     const form = formRef.current;
+    if (!form) return null;
     const name = form.querySelector('#parentName')?.value.trim() || '';
     const phone = form.querySelector('#phone')?.value.trim() || '';
     const email = form.querySelector('#email')?.value.trim() || '';
     const childAge = form.querySelector('#childAge')?.value.trim() || '';
     const message = form.querySelector('#message')?.value.trim() || '';
+    return { name, phone, email, childAge, message };
+  };
 
-    if (!name || !email || !message) {
+  const validate = (data) => {
+    if (!data.name || !data.email || !data.message) {
       setStatus('error');
-      setFeedbackMsg('Please fill in all required fields (Name, Email, Message).');
+      setFeedbackMsg('Please complete required fields: Name, Email, and Clinical Query.');
       setTimeout(() => setStatus('idle'), 4000);
-      return;
+      return false;
+    }
+    return true;
+  };
+
+  // 1. WhatsApp Clinical Dispatch (Direct to Dr. Janaki's mobile, zero setup)
+  const handleWhatsApp = (e) => {
+    e.preventDefault();
+    const data = getFormData();
+    if (!data || !validate(data)) return;
+
+    setStatus('success');
+    setFeedbackMsg('Opening WhatsApp to send your clinical enquiry...');
+
+    const waText = `Hello Dr. Janaki S,\n\nI am reaching out regarding a paediatric clinical enquiry from your portfolio website:\n\n• *Parent / Inquirer:* ${data.name}\n• *Phone:* ${data.phone || 'Not provided'}\n• *Email:* ${data.email}\n• *Child Age / Query Nature:* ${data.childAge || 'General Consult'}\n\n*Enquiry Details:*\n${data.message}`;
+
+    const waUrl = `https://wa.me/91${personalInfo.phone}?text=${encodeURIComponent(waText)}`;
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
+
+    setTimeout(() => {
+      formRef.current?.reset();
+      setStatus('idle');
+    }, 4500);
+  };
+
+  // 2. Direct Web Gmail Dispatch (Opens in browser tab with details prefilled, zero mail apps)
+  const handleEmail = (e) => {
+    e.preventDefault();
+    const data = getFormData();
+    if (!data || !validate(data)) return;
+
+    setStatus('success');
+    setFeedbackMsg('Opening Web Gmail with your enquiry prefilled...');
+
+    const subject = `Paediatric Clinical Enquiry from ${data.name} (Child: ${data.childAge || 'General'})`;
+    const body = `Dear Dr. Janaki S,\n\nI am contacting you regarding a paediatric clinical enquiry:\n\n• Parent / Inquirer: ${data.name}\n• Contact Phone: ${data.phone || 'Not provided'}\n• Email Address: ${data.email}\n• Child Age / Nature: ${data.childAge || 'General Consult'}\n\nClinical Query Details:\n${data.message}\n\nThank you,\n${data.name}`;
+
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(personalInfo.emails.primary)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    const popup = window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      window.location.href = `mailto:${personalInfo.emails.primary}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
-    setStatus('sending');
-    setFeedbackMsg('');
-
-    const targetEmail = personalInfo.formSubmissionEmail || 'kameshwar692007@gmail.com';
-
-    try {
-      const response = await fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          _subject: `New Clinical Enquiry from ${name} (Child: ${childAge || 'Not specified'})`,
-          _template: 'table',
-          _captcha: 'false',
-          'Parent / Inquirer Name': name,
-          'Contact Phone': phone || 'Not provided',
-          'Reply-To Email': email,
-          'Child Age / Query Nature': childAge || 'General Enquiry',
-          'Clinical Enquiry Details': message,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success === 'true' || response.ok) {
-        setStatus('success');
-        setFeedbackMsg('Thank you! Your clinical enquiry has been sent to Dr. Janaki. You will receive a response shortly.');
-        formRef.current.reset();
-        setTimeout(() => setStatus('idle'), 6000);
-      } else if (data.message && data.message.includes('Activation')) {
-        setStatus('success');
-        setFeedbackMsg(`Activation email sent to ${targetEmail}! Please check your inbox (or Spam folder) and click "Activate Form" once to start receiving submissions.`);
-        formRef.current.reset();
-        setTimeout(() => setStatus('idle'), 10000);
-      } else {
-        throw new Error(data.message || 'Submission failed');
-      }
-    } catch (err) {
-      console.warn('Form submission notice:', err);
-      setStatus('error');
-      setFeedbackMsg('Unable to send enquiry right now. Please check your network connection and try again.');
-      setTimeout(() => setStatus('idle'), 5000);
-    }
+    setTimeout(() => {
+      formRef.current?.reset();
+      setStatus('idle');
+    }, 4500);
   };
 
   return (
@@ -229,14 +230,14 @@ const Contact = () => {
           >
             <form
               ref={formRef}
-              onSubmit={handleSubmit}
+              onSubmit={handleWhatsApp}
               className="bg-[#0B2345] p-7 sm:p-9 rounded-2xl border border-white/10 shadow-xl flex flex-col space-y-4 hover:border-white/20 transition-colors"
             >
               <h3 className="text-xl font-bold text-white mb-0.5">
                 Send a Professional Enquiry
               </h3>
               <p className="text-xs text-slate-300 mb-3">
-                Complete the fields below. A consultation enquiry will be drafted directly to Dr. Janaki's email.
+                Complete the fields below to connect with Dr. Janaki S regarding child health queries.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -311,30 +312,38 @@ const Contact = () => {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={status === 'sending'}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-[#061B3A] font-bold text-sm hover:scale-[1.01] transition-transform shadow-[0_8px_20px_rgba(2,132,199,0.3)] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {status === 'sending' ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-[#061B3A]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Sending Enquiry...</span>
-                  </>
-                ) : status === 'success' ? (
-                  <>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <span>Enquiry Sent Successfully ✓</span>
-                  </>
-                ) : (
-                  <span>Submit Clinical Enquiry</span>
-                )}
-              </button>
+              {/* Dual Instant Actions - Zero Client Setup Required */}
+              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                {/* Primary Action: Direct WhatsApp Dispatch */}
+                <button
+                  type="button"
+                  onClick={handleWhatsApp}
+                  className="flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#059669] via-[#10B981] to-[#0D9488] text-white font-bold text-xs sm:text-sm hover:scale-[1.01] transition-transform shadow-[0_8px_20px_rgba(16,185,129,0.3)] flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.587 1.961.947 3.01.947 3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.767-5.767-5.767zm0 10.457c-.896 0-1.777-.246-2.551-.715l-.183-.11-1.895.497.506-1.848-.12-.191c-.516-.821-.788-1.745-.788-2.696 0-2.613 2.127-4.74 4.742-4.74 2.614 0 4.741 2.127 4.741 4.74 0 2.614-2.127 4.741-4.741 4.741z" />
+                    <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.761.459 3.479 1.332 5.001l-1.417 5.176 5.305-1.391c1.472.802 3.129 1.226 4.811 1.226h.004c5.505 0 9.988-4.478 9.989-9.985 0-2.669-1.038-5.177-2.925-7.064-1.887-1.888-4.396-2.926-7.065-2.926z" />
+                  </svg>
+                  <span>Send via WhatsApp</span>
+                </button>
+
+                {/* Secondary Action: Direct Web Gmail Dispatch */}
+                <button
+                  type="button"
+                  onClick={handleEmail}
+                  className="flex-1 py-3.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold text-xs sm:text-sm hover:scale-[1.01] transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <svg className="w-4 h-4 text-[#38BDF8] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                  <span>Send via Gmail</span>
+                </button>
+              </div>
+
+              <p className="text-[11px] text-slate-400 text-center pt-1 font-normal">
+                ⚡ Direct to Dr. Janaki's verified channels · No technical setup required
+              </p>
 
               {status === 'success' && (
                 <motion.div
@@ -342,7 +351,7 @@ const Contact = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs text-center font-medium"
                 >
-                  {feedbackMsg || 'Thank you! Your clinical enquiry has been sent. You will receive a response shortly.'}
+                  ✓ {feedbackMsg || 'Opening your chosen channel with the enquiry prefilled...'}
                 </motion.div>
               )}
 
@@ -352,7 +361,7 @@ const Contact = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="p-3.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs text-center font-medium"
                 >
-                  {feedbackMsg || 'Please fill in all required fields (Name, Email, Message).'}
+                  {feedbackMsg || 'Please complete required fields (Name, Email, Message).'}
                 </motion.div>
               )}
             </form>
