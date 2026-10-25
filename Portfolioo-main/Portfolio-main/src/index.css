@@ -70,6 +70,12 @@
 /* ════════════════════════════════════════════════════════════════
    RESET / BASE
 ════════════════════════════════════════════════════════════════ */
+@media (pointer: fine) {
+  html, body, *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 html { 
   scroll-behavior: smooth; 
 }

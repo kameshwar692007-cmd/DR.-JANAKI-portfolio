@@ -85,13 +85,13 @@ export const CustomCursor = () => {
           translateY: '-50%',
         }}
         animate={{
-          width: isHovered ? 52 : isClicking ? 28 : 36,
-          height: isHovered ? 52 : isClicking ? 28 : 36,
-          borderColor: isHovered ? '#38BDF8' : 'rgba(56, 189, 248, 0.65)',
-          backgroundColor: isHovered ? 'rgba(56, 189, 248, 0.15)' : 'rgba(2, 132, 199, 0.04)',
+          width: isHovered ? 50 : isClicking ? 26 : 34,
+          height: isHovered ? 50 : isClicking ? 26 : 34,
+          borderColor: isHovered ? '#38BDF8' : 'rgba(56, 189, 248, 0.75)',
+          backgroundColor: isHovered ? 'rgba(56, 189, 248, 0.16)' : 'rgba(2, 132, 199, 0.05)',
           boxShadow: isHovered
-            ? '0 0 25px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(56, 189, 248, 0.25)'
-            : '0 0 12px rgba(56, 189, 248, 0.25)',
+            ? '0 0 24px rgba(56, 189, 248, 0.55), inset 0 0 10px rgba(56, 189, 248, 0.25)'
+            : '0 0 12px rgba(56, 189, 248, 0.3)',
         }}
         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
         className="fixed top-0 left-0 pointer-events-none z-[999999] rounded-full border border-solid"
@@ -107,11 +107,11 @@ export const CustomCursor = () => {
           translateY: '-50%',
         }}
         animate={{
-          scale: isClicking ? 0.6 : isHovered ? 1.4 : 1,
+          scale: isClicking ? 0.7 : isHovered ? 1.4 : 1,
           opacity: isVisible ? 1 : 0,
         }}
         transition={{ duration: 0.15 }}
-        className="fixed top-0 left-0 pointer-events-none z-[999999] w-2 h-2 rounded-full bg-[#38BDF8] shadow-[0_0_8px_#38BDF8]"
+        className="fixed top-0 left-0 pointer-events-none z-[999999] w-2.5 h-2.5 rounded-full bg-[#38BDF8] shadow-[0_0_10px_#38BDF8,0_0_3px_#ffffff]"
       />
     </>
   );
