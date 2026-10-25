@@ -3,6 +3,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Preloader from './components/Preloader';
 import Navbar from './components/Navbar';
+import CustomCursor from './components/CustomCursor';
 import Hero from './components/Hero';
 import About from './components/About';
 import TechnicalSkills from './components/TechnicalSkills';
@@ -22,6 +23,7 @@ function App() {
 
   return (
     <>
+      <CustomCursor />
       <Preloader />
       <Navbar />
       <Hero />

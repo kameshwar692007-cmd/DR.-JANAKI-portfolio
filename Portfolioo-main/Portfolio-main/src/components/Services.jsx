@@ -1,42 +1,54 @@
 import { motion } from 'framer-motion';
 import { carePathway } from '../data/portfolioData';
 
-const PathwayCard = ({ number, title, text, index }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 45, scale: 0.94 }}
-    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{
-      duration: 0.6,
-      delay: index * 0.12,
-      ease: [0.22, 1, 0.36, 1],
-    }}
-    whileHover={{
-      y: -8,
-      scale: 1.02,
-      transition: { duration: 0.25 },
-    }}
-    className="group relative rounded-[28px] bg-gradient-to-b from-[#0284C7] via-[#0284C7] to-[#0369A1] p-2.5 pt-3.5 shadow-xl shadow-sky-950/20 flex flex-col items-center hover:shadow-2xl hover:shadow-sky-500/25 transition-shadow duration-300"
-  >
-    {/* Top Metallic Rivet / Dot Accent */}
-    <div className="w-3.5 h-3.5 rounded-full bg-slate-200/90 ring-4 ring-white/20 shadow-inner mb-3 shrink-0" />
+const pathwayDirections = [
+  { x: -55, y: 35, rotate: -2.5 },
+  { x: -15, y: 50, rotate: -1 },
+  { x: 15, y: 50, rotate: 1 },
+  { x: 55, y: 35, rotate: 2.5 },
+];
 
-    {/* Deep Navy Inner Card */}
-    <div className="w-full bg-[#0B2345] rounded-2xl p-6 sm:p-7 flex flex-col justify-between flex-1 min-h-[250px] border border-white/5">
-      <div>
-        <span className="font-mono text-sm font-black text-[#38BDF8] tracking-wider block mb-3">
-          {number}
-        </span>
-        <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-3">
-          {title}
-        </h3>
-        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-          {text}
-        </p>
+const PathwayCard = ({ number, title, text, index }) => {
+  const dir = pathwayDirections[index % pathwayDirections.length];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: dir.x, y: dir.y, rotate: dir.rotate, scale: 0.92 }}
+      whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{
+        type: "spring",
+        stiffness: 85,
+        damping: 14,
+        delay: index * 0.1,
+      }}
+      whileHover={{
+        y: -10,
+        scale: 1.02,
+        transition: { duration: 0.25 },
+      }}
+      className="group relative rounded-[28px] bg-gradient-to-b from-[#0284C7] via-[#0284C7] to-[#0369A1] p-2.5 pt-3.5 shadow-xl shadow-sky-950/20 flex flex-col items-center hover:shadow-2xl hover:shadow-sky-500/25 transition-shadow duration-300"
+    >
+      {/* Top Metallic Rivet / Dot Accent */}
+      <div className="w-3.5 h-3.5 rounded-full bg-slate-200/90 ring-4 ring-white/20 shadow-inner mb-3 shrink-0" />
+
+      {/* Deep Navy Inner Card */}
+      <div className="w-full bg-[#0B2345] rounded-2xl p-6 sm:p-7 flex flex-col justify-between flex-1 min-h-[250px] border border-white/5">
+        <div>
+          <span className="font-mono text-sm font-black text-[#38BDF8] tracking-wider block mb-3">
+            {number}
+          </span>
+          <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-3">
+            {title}
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            {text}
+          </p>
+        </div>
       </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 const Services = () => {
   return (

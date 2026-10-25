@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { clinicalExpertise } from '../data/portfolioData';
 
 /* ─── PROFESSIONAL CLINICAL SVG ICONS ─────────────────────────────── */
@@ -50,45 +51,82 @@ const ExpertiseIcon = ({ type }) => {
   }
 };
 
-const ExpertiseCard = ({ category, index }) => (
-  <div
-    data-aos="fade-up"
-    data-aos-delay={index * 80}
-    className="rounded-2xl p-6 sm:p-7 bg-[#0B2345]/75 border border-white/10 hover:border-[#38BDF8]/40 hover:shadow-[0_15px_30px_rgba(2,132,199,0.12)] transition-all duration-300 flex flex-col justify-between group"
-  >
-    <div>
-      {/* Icon and Header */}
-      <div className="flex items-center gap-3.5 mb-4">
-        <span className="w-11 h-11 rounded-xl bg-[#0284C7]/20 border border-[#38BDF8]/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-          <ExpertiseIcon type={category.iconType} />
-        </span>
-        <div>
-          <h3 className="text-lg font-bold text-white tracking-tight leading-snug">
-            {category.title}
-          </h3>
-          <span className="text-[10px] uppercase tracking-wider font-semibold text-[#38BDF8]">
-            Clinical Discipline
+const flyDirections = [
+  { x: -50, y: -35, rotate: -3 },
+  { x: 0, y: -50, rotate: 0 },
+  { x: 50, y: -35, rotate: 3 },
+  { x: -50, y: 40, rotate: 2 },
+  { x: 0, y: 50, rotate: 0 },
+  { x: 50, y: 40, rotate: -2 },
+];
+
+const ExpertiseCard = ({ category, index }) => {
+  const dir = flyDirections[index % flyDirections.length];
+
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        x: dir.x,
+        y: dir.y,
+        rotate: dir.rotate,
+        scale: 0.94,
+      }}
+      whileInView={{
+        opacity: 1,
+        x: 0,
+        y: 0,
+        rotate: 0,
+        scale: 1,
+      }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{
+        type: "spring",
+        stiffness: 85,
+        damping: 15,
+        delay: index * 0.08,
+      }}
+      whileHover={{
+        y: -10,
+        scale: 1.025,
+        transition: { duration: 0.2 },
+      }}
+      className="rounded-2xl p-6 sm:p-7 bg-[#0B2345]/85 border border-white/10 hover:border-[#38BDF8]/60 hover:shadow-[0_20px_40px_rgba(2,132,199,0.2)] transition-colors duration-300 flex flex-col justify-between group"
+    >
+      <div>
+        {/* Icon and Header */}
+        <div className="flex items-center gap-3.5 mb-4">
+          <span className="w-11 h-11 rounded-xl bg-[#0284C7]/20 border border-[#38BDF8]/30 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[#0284C7]/30 transition-all duration-300">
+            <ExpertiseIcon type={category.iconType} />
           </span>
+          <div>
+            <h3 className="text-lg font-bold text-white tracking-tight leading-snug">
+              {category.title}
+            </h3>
+            <span className="text-[10px] uppercase tracking-wider font-semibold text-[#38BDF8]">
+              Clinical Discipline
+            </span>
+          </div>
         </div>
+
+        {/* Summary */}
+        <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed mb-4">
+          {category.summary}
+        </p>
+
+        {/* Item List */}
+        <ul className="space-y-2 border-t border-white/10 pt-4">
+          {category.items.map((item, i) => (
+            <li key={i} className="flex items-start gap-2 text-xs text-slate-200 font-normal">
+              <span className="text-[#38BDF8] font-bold leading-none mt-0.5">•</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      {/* Summary */}
-      <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed mb-4">
-        {category.summary}
-      </p>
-
-      {/* Item List */}
-      <ul className="space-y-2 border-t border-white/10 pt-4">
-        {category.items.map((item, i) => (
-          <li key={i} className="flex items-start gap-2 text-xs text-slate-200 font-normal">
-            <span className="text-[#38BDF8] font-bold leading-none mt-0.5">•</span>
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </div>
-);
+    </motion.div>
+  );
+};
 
 const TechnicalSkills = () => {
   return (
@@ -98,8 +136,14 @@ const TechnicalSkills = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
 
-        {/* Section Header */}
-        <div data-aos="fade-up" className="mb-14 text-center max-w-3xl mx-auto">
+        {/* Section Header with smooth reveal */}
+        <motion.div
+          initial={{ opacity: 0, y: 35 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.6 }}
+          className="mb-14 text-center max-w-3xl mx-auto"
+        >
           <div className="inline-block border border-white/15 rounded-full px-3.5 py-1 text-xs font-semibold text-[#38BDF8] mb-3 bg-white/5 backdrop-blur-sm">
             {clinicalExpertise.badge}
           </div>
@@ -109,9 +153,9 @@ const TechnicalSkills = () => {
           <p className="text-slate-300 text-base md:text-lg leading-relaxed font-normal">
             {clinicalExpertise.description}
           </p>
-        </div>
+        </motion.div>
 
-        {/* Expertise Grid */}
+        {/* Expertise Grid with dynamic fly-in scroll animation */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {clinicalExpertise.categories.map((category, index) => (
             <ExpertiseCard key={category.title} category={category} index={index} />

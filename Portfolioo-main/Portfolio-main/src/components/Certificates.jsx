@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { credentialsData } from '../data/portfolioData';
 
 /* ─── PROFESSIONAL CREDENTIAL SVG ICONS ──────────────────────────── */
@@ -31,33 +32,51 @@ const CredentialIcon = ({ type }) => {
   }
 };
 
-const CredentialCard = ({ cert, index }) => (
-  <div
-    data-aos="zoom-in"
-    data-aos-delay={index * 100}
-    className="bg-[#0B2345]/75 rounded-2xl p-6 border border-white/10 hover:border-[#38BDF8]/40 hover:scale-[1.015] transition-all duration-300 shadow-sm flex items-start gap-4"
-  >
-    <span className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-      <CredentialIcon type={cert.iconType} />
-    </span>
-    <div>
-      <div className="flex items-center gap-2 mb-1">
-        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-[#38BDF8]/15 text-[#38BDF8]">
-          {cert.category}
-        </span>
-        <span className="text-[10px] text-slate-300 font-mono">
-          {cert.validity}
-        </span>
+const certFlyDirections = [
+  { x: -40, y: 30, rotate: -2 },
+  { x: 0, y: 40, rotate: 0 },
+  { x: 40, y: 30, rotate: 2 },
+];
+
+const CredentialCard = ({ cert, index }) => {
+  const dir = certFlyDirections[index % certFlyDirections.length];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: dir.x, y: dir.y, rotate: dir.rotate, scale: 0.94 }}
+      whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{
+        type: "spring",
+        stiffness: 85,
+        damping: 15,
+        delay: index * 0.1,
+      }}
+      whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.2 } }}
+      className="bg-[#0B2345]/75 rounded-2xl p-6 border border-white/10 hover:border-[#38BDF8]/40 transition-colors shadow-sm flex items-start gap-4"
+    >
+      <span className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+        <CredentialIcon type={cert.iconType} />
+      </span>
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-[#38BDF8]/15 text-[#38BDF8]">
+            {cert.category}
+          </span>
+          <span className="text-[10px] text-slate-300 font-mono">
+            {cert.validity}
+          </span>
+        </div>
+        <h3 className="text-white font-bold text-base leading-snug mb-1">
+          {cert.name}
+        </h3>
+        <p className="text-slate-300 text-xs font-medium">
+          {cert.issuer}
+        </p>
       </div>
-      <h3 className="text-white font-bold text-base leading-snug mb-1">
-        {cert.name}
-      </h3>
-      <p className="text-slate-300 text-xs font-medium">
-        {cert.issuer}
-      </p>
-    </div>
-  </div>
-);
+    </motion.div>
+  );
+};
 
 const Certificates = () => {
   return (
@@ -65,7 +84,13 @@ const Certificates = () => {
       <div className="max-w-6xl mx-auto relative z-20">
         
         {/* Header */}
-        <div data-aos="fade-up" className="mb-12 text-center max-w-2xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5 }}
+          className="mb-12 text-center max-w-2xl mx-auto"
+        >
           <div className="inline-block border border-white/15 rounded-full px-3.5 py-1 text-xs font-semibold text-[#38BDF8] mb-3 bg-white/5 backdrop-blur-sm">
             Professional Credentials
           </div>
@@ -75,7 +100,7 @@ const Certificates = () => {
           <p className="text-slate-300 text-base md:text-lg font-normal leading-relaxed">
             Professional standing certified by the Indian Academy of Paediatrics and standardized resuscitation councils.
           </p>
-        </div>
+        </motion.div>
 
         {/* Credentials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

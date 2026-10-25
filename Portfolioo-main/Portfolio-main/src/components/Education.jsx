@@ -1,23 +1,32 @@
 import { motion } from 'framer-motion';
 import { educationList } from '../data/portfolioData';
 
-const EducationCard = ({ edu, index }) => (
-  <motion.div
-    initial={{ opacity: 0, x: index === 0 ? -40 : 40, scale: 0.95 }}
-    whileInView={{ opacity: 1, x: 0, scale: 1 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{
-      duration: 0.65,
-      delay: index * 0.15,
-      ease: [0.22, 1, 0.36, 1],
-    }}
-    whileHover={{
-      y: -8,
-      scale: 1.015,
-      transition: { duration: 0.25 },
-    }}
-    className="group relative rounded-[28px] bg-gradient-to-b from-[#0284C7] via-[#0284C7] to-[#0369A1] p-2.5 pt-3.5 shadow-xl shadow-sky-950/20 flex flex-col items-center hover:shadow-2xl hover:shadow-sky-500/25 transition-shadow duration-300"
-  >
+const educationFlyDirections = [
+  { x: -65, y: 30, rotate: -2 },
+  { x: 65, y: 30, rotate: 2 },
+];
+
+const EducationCard = ({ edu, index }) => {
+  const dir = educationFlyDirections[index % educationFlyDirections.length];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: dir.x, y: dir.y, rotate: dir.rotate, scale: 0.94 }}
+      whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{
+        type: "spring",
+        stiffness: 85,
+        damping: 15,
+        delay: index * 0.15,
+      }}
+      whileHover={{
+        y: -10,
+        scale: 1.015,
+        transition: { duration: 0.25 },
+      }}
+      className="group relative rounded-[28px] bg-gradient-to-b from-[#0284C7] via-[#0284C7] to-[#0369A1] p-2.5 pt-3.5 shadow-xl shadow-sky-950/20 flex flex-col items-center hover:shadow-2xl hover:shadow-sky-500/25 transition-shadow duration-300"
+    >
     {/* Top Metallic Rivet / Dot Accent */}
     <div className="w-3.5 h-3.5 rounded-full bg-slate-200/90 ring-4 ring-white/20 shadow-inner mb-3 shrink-0" />
 
@@ -58,7 +67,8 @@ const EducationCard = ({ edu, index }) => (
       </div>
     </div>
   </motion.div>
-);
+  );
+};
 
 const Education = () => {
   return (

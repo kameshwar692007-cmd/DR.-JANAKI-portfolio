@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { conferencesAndResearch } from '../data/portfolioData';
 
 const ConferenceItem = ({ item, index }) => {
@@ -8,14 +9,32 @@ const ConferenceItem = ({ item, index }) => {
       {/* Central timeline node dot */}
       <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#0284C7] rounded-full border-4 border-[#061B3A] z-30 shadow-[0_0_12px_rgba(2,132,199,0.8)] group-hover:scale-125 transition-transform duration-300" />
 
-      {/* Card Content Side */}
-      <div
-        data-aos={isEven ? "fade-right" : "fade-left"}
+      {/* Card Content Side with dynamic fly-in */}
+      <motion.div
+        initial={{
+          opacity: 0,
+          x: isEven ? -60 : 60,
+          y: 20,
+          rotate: isEven ? -1.5 : 1.5,
+        }}
+        whileInView={{
+          opacity: 1,
+          x: 0,
+          y: 0,
+          rotate: 0,
+        }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{
+          type: "spring",
+          stiffness: 85,
+          damping: 15,
+          delay: index * 0.1,
+        }}
         className={`w-full md:w-[45%] pl-12 md:pl-0 ${
           isEven ? 'md:text-right md:order-1' : 'md:text-left md:order-2'
         }`}
       >
-        <div className="bg-[#0B2345]/75 border border-white/10 rounded-2xl p-6 hover:border-[#38BDF8]/30 hover:shadow-[0_12px_30px_rgba(2,132,199,0.12)] transition-all duration-300">
+        <div className="bg-[#0B2345]/75 border border-white/10 rounded-2xl p-6 hover:border-[#38BDF8]/40 hover:shadow-[0_12px_30px_rgba(2,132,199,0.18)] transition-all duration-300">
           <div className={`flex flex-wrap gap-2 items-center mb-2.5 ${isEven ? 'md:justify-end' : 'md:justify-start'}`}>
             <span className="bg-[#0284C7]/20 text-[#38BDF8] text-[10px] font-bold tracking-wider uppercase py-1 px-3 rounded-full border border-[#0284C7]/30">
               {item.badge}
@@ -35,7 +54,7 @@ const ConferenceItem = ({ item, index }) => {
             {item.description}
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Desktop Spacer */}
       <div className="hidden md:block w-[45%] order-2" />
@@ -49,7 +68,13 @@ const Leadership = () => {
       <div className="max-w-6xl mx-auto relative z-20">
         
         {/* Header */}
-        <div data-aos="fade-up" className="mb-16 text-center max-w-2xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5 }}
+          className="mb-16 text-center max-w-2xl mx-auto"
+        >
           <div className="inline-block border border-white/15 rounded-full px-3.5 py-1 text-xs font-semibold text-[#38BDF8] mb-3 bg-white/5 backdrop-blur-sm">
             Academic &amp; Clinical Presentations
           </div>
@@ -59,7 +84,7 @@ const Leadership = () => {
           <p className="text-slate-300 text-base md:text-lg font-normal leading-relaxed">
             Active participation in state and national paediatric assemblies and ongoing hospital-based clinical studies.
           </p>
-        </div>
+        </motion.div>
 
         {/* Vertical Timeline */}
         <div className="relative">
@@ -71,7 +96,13 @@ const Leadership = () => {
         </div>
 
         {/* Ongoing Research Card with unified SVG icon */}
-        <div data-aos="fade-up" className="mt-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#0B2345] to-[#061B3A] border border-[#38BDF8]/30 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ type: "spring", stiffness: 85, damping: 15, delay: 0.2 }}
+          className="mt-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#0B2345] to-[#061B3A] border border-[#38BDF8]/30 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6"
+        >
           <div className="flex items-start gap-4">
             <span className="w-12 h-12 rounded-xl bg-[#0284C7]/20 border border-[#38BDF8]/30 text-[#38BDF8] flex items-center justify-center shrink-0">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -91,7 +122,7 @@ const Leadership = () => {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>
