@@ -342,7 +342,7 @@ const Contact = () => {
               </div>
 
               <p className="text-[11px] text-slate-400 text-center pt-1 font-normal">
-                ⚡ Direct to Dr. Janaki's verified channels · No technical setup required
+                  Direct to Dr. Janaki's verified channels · No technical setup required
               </p>
 
               {status === 'success' && (

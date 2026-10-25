@@ -1,11 +1,8 @@
-import { useEffect, useRef, lazy, Suspense } from 'react';
+import { useEffect, useRef } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { heroContent, personalInfo } from '../data/portfolioData';
 import { TextMarquee } from './text-marquee';
-
-// Dynamic lazy import of 3D Stethoscope component
-const StethoscopeHero = lazy(() => import('./StethoscopeHero'));
 
 /* ─── CLINICAL KEYWORDS FOR QUARRY TEXT MARQUEE ──────────────────── */
 const CLINICAL_MARQUEE_WORDS = [
@@ -17,18 +14,6 @@ const CLINICAL_MARQUEE_WORDS = [
   "Infectious Diseases in Children",
   "Evidence-Based Child Health",
 ];
-
-/* ─── RESTRAINED SUBTLE PEDESTAL ────────────────────────────────── */
-const RefinedPedestal = () => (
-  <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
-    {/* Soft inner glow ring */}
-    <div className="w-64 sm:w-80 h-64 sm:h-80 rounded-full border border-sky-400/20 bg-gradient-to-b from-sky-400/5 to-transparent blur-[1px]" />
-    {/* Concentric subtle base circle */}
-    <div className="absolute w-48 sm:w-60 h-48 sm:h-60 rounded-full border border-sky-400/15" />
-    {/* Soft radial under-glow */}
-    <div className="absolute w-56 h-56 rounded-full bg-sky-500/10 blur-[60px]" />
-  </div>
-);
 
 const Hero = () => {
   const heroRef = useRef(null);
@@ -145,24 +130,107 @@ const Hero = () => {
 
         </div>
 
-        {/* Right Column: 3D Stethoscope Experience with Controlled Framing */}
+        {/* Right Column: Premium Clinical Identity Presentation (Clean, Modern 2D Medical Card) */}
         <div data-aos="fade-left" data-aos-delay="150" className="lg:col-span-5 relative flex items-center justify-center">
           
-          {/* Refined subtle pedestal */}
-          <RefinedPedestal />
+          {/* Subtle Ambient Underglow */}
+          <div className="absolute w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-gradient-to-tr from-[#0284C7]/20 to-[#38BDF8]/10 blur-[90px] pointer-events-none" />
 
-          {/* Contained 3D Model View */}
-          <div className="relative z-10 w-full max-w-[380px] sm:max-w-[420px] aspect-square flex items-center justify-center">
-            <Suspense
-              fallback={
-                <div className="flex flex-col items-center justify-center gap-2 text-slate-400">
-                  <div className="w-8 h-8 border-2 border-[#38BDF8] border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xs">Loading 3D Stethoscope...</span>
+          {/* Clinical Profile Card */}
+          <div className="relative z-10 w-full max-w-[440px] rounded-3xl bg-gradient-to-b from-[#0B2345] to-[#071E3D] border border-white/15 p-6 sm:p-8 shadow-2xl shadow-sky-950/40">
+            
+            {/* Top Bar: Verification & Status */}
+            <div className="flex items-center justify-between pb-5 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <span className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0284C7] to-[#38BDF8] flex items-center justify-center text-white shadow-md shadow-sky-500/20">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 4v16m-8-8h16" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 className="text-white font-bold text-sm tracking-tight">Clinical Practice</h3>
+                  <p className="text-xs text-slate-300 font-medium">SMVMCH · Dept. of Paediatrics</p>
                 </div>
-              }
-            >
-              <StethoscopeHero />
-            </Suspense>
+              </div>
+              
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold tracking-wide">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Senior Resident
+              </div>
+            </div>
+
+            {/* Core Competencies Quick Grid */}
+            <div className="grid grid-cols-2 gap-3 my-5">
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#38BDF8]/40 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#0284C7]/20 text-[#38BDF8] flex items-center justify-center mb-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 4v16m-8-8h16" />
+                  </svg>
+                </div>
+                <h4 className="text-white font-semibold text-xs mb-0.5">General Paediatrics</h4>
+                <p className="text-[11px] text-slate-300">Acute &amp; Preventive Care</p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#38BDF8]/40 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#0284C7]/20 text-[#38BDF8] flex items-center justify-center mb-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 8v4" />
+                    <path d="M12 16h.01" />
+                  </svg>
+                </div>
+                <h4 className="text-white font-semibold text-xs mb-0.5">Neonatal Care</h4>
+                <p className="text-[11px] text-slate-300">NICU &amp; Newborn Support</p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#38BDF8]/40 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#0284C7]/20 text-[#38BDF8] flex items-center justify-center mb-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                  </svg>
+                </div>
+                <h4 className="text-white font-semibold text-xs mb-0.5">PICU Care</h4>
+                <p className="text-[11px] text-slate-300">Respiratory &amp; Critical Care</p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#38BDF8]/40 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#0284C7]/20 text-[#38BDF8] flex items-center justify-center mb-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                </div>
+                <h4 className="text-white font-semibold text-xs mb-0.5">Emergency Triage</h4>
+                <p className="text-[11px] text-slate-300">Immediate Resuscitation</p>
+              </div>
+            </div>
+
+            {/* Quick Metrics Bar */}
+            <div className="p-4 rounded-2xl bg-[#061B3A]/80 border border-white/10 flex items-center justify-between text-center">
+              <div>
+                <p className="text-base sm:text-lg font-black text-white">3 Years</p>
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Experience</p>
+              </div>
+              <div className="h-7 w-px bg-white/15" />
+              <div>
+                <p className="text-base sm:text-lg font-black text-[#38BDF8]">MD Paed.</p>
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Completed 2025</p>
+              </div>
+              <div className="h-7 w-px bg-white/15" />
+              <div>
+                <p className="text-base sm:text-lg font-black text-white">IAP Member</p>
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">BLS / ACLS</p>
+              </div>
+            </div>
+
+            {/* Location & Hospital Chip */}
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-300">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#38BDF8]" />
+                Sri Manakula Vinayagar Hospital
+              </span>
+              <span className="font-semibold text-slate-400">Puducherry</span>
+            </div>
+
           </div>
 
         </div>
